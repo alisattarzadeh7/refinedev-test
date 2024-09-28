@@ -22,7 +22,6 @@ export const Login = () => {
     });
 
     const handleSubmitForm = handleSubmit((values)=>{
-        console.log({values})
         login(values)
     })
 

@@ -10,7 +10,6 @@ export const authProvider: AuthProvider = {
        username,
        password
      })
-     console.log({data})
      localStorage.setItem(TOKEN_KEY, data.data);
      return {
        success: true,

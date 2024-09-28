@@ -1,21 +1,20 @@
-import type { DataProvider } from "@refinedev/core";
+import type {DataProvider} from "@refinedev/core";
 import axios from "../config/axios";
 
 
 export const dataProvider: DataProvider = {
-    getList: async ({ resource, pagination, filters, sorters, meta }) => {
+    getList: async ({resource, pagination, meta}) => {
 
-        const response = await axios(`${resource}/list`,{
-            params:{
-                page:pagination?.current,
-                pageSize:pagination?.pageSize,
+        const response = await axios(`${resource}s/list`, {
+            params: {
+                page: pagination?.current,
+                pageSize: pagination?.pageSize,
             }
         });
 
-        console.log({response})
         return {
-            data:response.data,
-            total: 0, // We'll cover this in the next steps.
+            data: response.data.data.items,
+            total: response.data.data.totalCount, // We'll cover this in the next steps.
         };
     },
     getOne: () => {
@@ -24,8 +23,13 @@ export const dataProvider: DataProvider = {
     update: () => {
         throw new Error("Not implemented");
     },
-    create: () => {
-        throw new Error("Not implemented");
+    create: ({resource, variables}) => {
+        const res =  axios.post(`${resource}`, {
+            ...variables,
+            isLegal:false
+        });
+
+        return res
     },
     deleteOne: () => {
         throw new Error("Not implemented");

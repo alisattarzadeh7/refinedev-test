@@ -1,74 +1,45 @@
 import {DateField, DeleteButton, EditButton, List, MarkdownField, ShowButton, useTable} from "@refinedev/antd";
 import {Space, Table} from "antd";
-import {BaseRecord, useList, useMany} from "@refinedev/core";
+import {BaseRecord, CanAccess, useList, useMany} from "@refinedev/core";
 import React from "react";
 
 
 const CustomerListPage = ()=>{
 
-    const {data} = useList({
-        resource:'customers'
-    })
     const { tableProps } = useTable({
         syncWithLocation: true,
-    });
-
-    console.log({tableProps,data})
-
-    const { data: categoryData, isLoading: categoryIsLoading } = useMany({
-        resource: "categories",
-        ids:
-            tableProps?.dataSource
-                ?.map((item) => item?.category?.id)
-                .filter(Boolean) ?? [],
-        queryOptions: {
-            enabled: !!tableProps?.dataSource,
-        },
+        pagination: { current: 1, pageSize: 10 },
     });
 
 
-    return (<List>
-        <Table {...tableProps} rowKey="id">
-            <Table.Column dataIndex="id" title={"ID"} />
-            <Table.Column dataIndex="title" title={"Title"} />
-            <Table.Column
-                dataIndex="content"
-                title={"Content"}
-                render={(value: any) => {
-                    if (!value) return "-";
-                    return <MarkdownField value={value.slice(0, 80) + "..."} />;
-                }}
-            />
-            <Table.Column
-                dataIndex={"category"}
-                title={"Category"}
-                render={(value) =>
-                    categoryIsLoading ? (
-                        <>Loading...</>
-                    ) : (
-                        categoryData?.data?.find((item) => item.id === value?.id)?.title
-                    )
-                }
-            />
-            <Table.Column dataIndex="status" title={"Status"} />
-            <Table.Column
-                dataIndex={["createdAt"]}
-                title={"Created at"}
-                render={(value: any) => <DateField value={value} />}
-            />
-            <Table.Column
-                title={"Actions"}
-                dataIndex="actions"
-                render={(_, record: BaseRecord) => (
-                    <Space>
-                        <EditButton hideText size="small" recordItemId={record.id} />
-                        <ShowButton hideText size="small" recordItemId={record.id} />
-                        <DeleteButton hideText size="small" recordItemId={record.id} />
-                    </Space>
-                )}
-            />
-        </Table>
-    </List>)
+
+    return (
+
+        <div>
+
+            <CanAccess resource="user" action="readf">
+                you have permission of user.read
+            </CanAccess>
+            <List>
+                <Table {...tableProps}  rowKey="id">
+                    <Table.Column dataIndex="id" title={"ID"} />
+                    <Table.Column dataIndex="fullName" title={"fullName"} />
+
+                    <Table.Column
+                        title={"Actions"}
+                        dataIndex="actions"
+                        render={(_, record: BaseRecord) => (
+                            <Space>
+                                <EditButton hideText size="small" recordItemId={record.id} />
+                                <ShowButton hideText size="small" recordItemId={record.id} />
+                                <DeleteButton hideText size="small" recordItemId={record.id} />
+                            </Space>
+                        )}
+                    />
+                </Table>
+            </List>
+        </div>
+    )
 }
 
 
